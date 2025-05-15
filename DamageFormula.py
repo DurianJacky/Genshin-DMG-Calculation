@@ -3,9 +3,11 @@ from Enemy import Enemy
 
 
 class Damage:
-    def __init__(self, character: Character, enemy: Enemy):
+    def __init__(self, character: Character, enemy: Enemy, attack_type: str = 'brust'):
+        '''attack = 'brust' or 'na' or 'skill' '''
         self.character = character
         self.enemy = enemy
+        self.attack_type = attack_type
         self.ATK = 0
         self.DEF = 0
         self.HP = 0
@@ -137,8 +139,15 @@ class Damage:
         # type = "ATK+DEF" for calculating damage based on ATK and DEF,
         # type = "ATK+HP" for calculating damage based on ATK and HP,
         # type = "ATK+EM" for calculating damage based on ATK and EM.
+        if self.attack_type == 'na':
+            talent = self.character.normal_attack_talent
+        elif self.attack_type == 'brust':
+            talent = self.character.brust_talent
+        else:
+            talent = self.character.skill_talent
 
-        talent = self.character.talent
+        self.talent = talent
+
         ATK = round(self.atk())
         HP = round(self.hp())
         DEF = round(self.defence())

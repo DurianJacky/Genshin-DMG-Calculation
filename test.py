@@ -9,19 +9,7 @@ el = EngulfingLightning()
 esf = EmblemOfSeveredFate()
 enemy = Enemy("Hilichurl")
 
-
-
-raiden.equip_weapon(el)
-raiden.equip_artifact(esf)
-
-
-raiden.get_passive()
-raiden.skill()
-raiden.burst()
-raiden.constellations()
-
-
-skk = Skirk()
+skk = Skirk(constellation=2)
 alt = Azurelight()
 fdg = FinaleOfTheDeepGalleries()
 
@@ -31,16 +19,18 @@ skk.equip_artifact(fdg)
 # alt.get_effect()
 # fdg.get_effect()
 
-skk.get_passive('a')
+skk.get_passive('q')
 skk.skill()
 # skk.normal_attack()
 skk.burst()
 
-# skk.info()
 
 ''' Skirk singel damege calculation'''
 
 dmg = Damage(skk, enemy)
+
+skk.info()
+dmg.info()
 
 skk_singel = dmg.damage_calculate()
 
@@ -83,5 +73,4 @@ skk_ecf11 = dmg.damage_calculate()
 print(f'skk_ecf11 \t {skk_ecf11}, \timproved {(skk_ecf11 - skk_singel)/skk_singel}')
 
 
-''' take c2 Skirk into calculation '''
 

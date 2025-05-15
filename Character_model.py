@@ -1,10 +1,10 @@
 
 
 class Character:
-    def __init__(self, name, level=90):
-        from Weapon_model import Weapon
+    def __init__(self, name, level=90, constellation = 0):
         self.name = name
         self.level = level
+        self.constellation = constellation
         
         self.ATK = 0
         self.ATKBonus = 0
@@ -22,13 +22,17 @@ class Character:
         self.EMFlat = 0
 
         self.DMGBonus = 0
+        
 
         self.Crit = 5
         self.CritDMG = 50
         
         self.ER = 100
 
-        self.talent = 0
+        self.normal_attack_talent = 0
+        self.skill_talent = 0
+        self.brust_talent = 0
+        self.extra_talent = 0
 
         self.DefIgnore = 0
 
@@ -71,12 +75,14 @@ class Character:
         
 
 class Raiden(Character):
-    def __init__(self, name = "Raiden", level=90):
-        super().__init__(name, level)
+    def __init__(self, name = "Raiden", level=90, constellation = 2):
+        super().__init__(name, level, constellation)
         self.ATK = 337
         self.HP = 12907
         self.DEF = 789
         self.ER = 100 + 32
+        self.constellations()
+        
 
     def get_passive(self):
         # Enlightened One: Each 1% above 100% Energy Recharge:
@@ -95,21 +101,27 @@ class Raiden(Character):
         # Chakra Desiderata: The maximum number of Resolve stacks is 60.
         ResolveBonus = 7 * stacks # 7% ATK per stack
         talentInitial = 721 # 721% ATK
-        self.talent = talentInitial + ResolveBonus
+        self.brust_talent = talentInitial + ResolveBonus
 
-    def constellations(self, constellation=2):
+    def constellations(self):
         # C2: Raiden Shogun's attacks ignore 60% of opponents' DEF
-        if(constellation >= 2):
+        if(self.constellation >= 2):
             self.DefIgnore = 60
 
 
 class Skirk(Character):
-    def __init__(self, name = "Skirk", level=90):
-        super().__init__(name, level)
+    def __init__(self, name = "Skirk", level=90, constellation = 0):
+        super().__init__(name, level, constellation)
         self.ATK = 359
         self.DMGBonus += 38.4
+        self.na_DMGbonus = 0
         self.stack = 0
-        self.stack_limit = 24
+        self.stack_limit = 100
+        self.stack_used = 0
+        self.stack_used_limit = 12
+
+        self.constellations()
+        
 
     def get_passive(self, action: str = 'a'):
         '''
@@ -122,19 +134,27 @@ class Skirk(Character):
             self.skillTalent = 1.6
     
     def normal_attack(self):
-        talent = [262.6, 236.8, 149.7*2, 159.2*2, 388.7]
-        self.talent = sum(talent)
-        self.DMGBonus += 20
+        na_talent = [281.1, 253.5, 160.3*2, 170.4*2, 416.1]
+        self.normal_attack_talent += sum(na_talent) + self.extra_talent
+        self.DMGBonus += 20.0 + self.na_DMGbonus
 
     def skill(self):
         self.stack += 45
     
     def burst(self):
-        self.talent = 248.6 * 5 + 414.4
-        self.DMGBonus += 29.93 * 12
+        self.stack = self.stack_limit if self.stack > self.stack_limit else self.stack
+        self.stack_used = (self.stack - 50) if (self.stack - 50) <= self.stack_used_limit else self.stack_used_limit
+        self.brust_talent_bonus = 29.93 * self.stack_used
+        self.brust_talent += 248.6 * 5 + 414.4 + self.extra_talent + self.brust_talent_bonus
     
     def constellations(self):
-        return super().constellations()
+        if self.constellation >= 1:
+            self.extra_talent += 500
+
+        if self.constellation >=2:
+            self.stack += 12
+            self.stack_used_limit += 12
+            self.na_DMGbonus = 60.0
 
 
 
